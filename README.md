@@ -18,7 +18,7 @@ A beautiful and intuitive time tracking and mood journaling application that hel
 
 ## Use 🚀
  
-- **Visit**: https://Timeloop.pages.dev or https://Timeloop.vercel.app for web use
+- **Visit**: https://Timeloop.pages.dev or https://Timeloop-gamma.vercel.app for web use
 
 ## Technologies Used 💻
 

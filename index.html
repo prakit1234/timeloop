@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0098f0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" href="./assets/logo.png">
+    <title>TimeLoop</title>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 2L28 8V24L16 30L4 24V8L16 2Z" fill="currentColor"/>
+                </svg>
+                <h1>TimeLoop</h1>
+            </div>
+            <div class="header-controls">
+                <button id="darkModeToggle" class="btn-icon" aria-label="Toggle dark mode">🌙</button>
+                <div class="streak-counter">
+                    <span>Current Streak: </span>
+                    <strong id="streakCount">0</strong>
+                    <span> days</span>
+                </div>
+            </div>
+        </header>
+
+        <nav class="app-nav">
+            <button class="nav-btn active" data-view="memories">Memories</button>
+            <button class="nav-btn" data-view="goals">Goals</button>
+            <button class="nav-btn" data-view="pomodoro">Pomodoro</button>
+            <button class="nav-btn" data-view="reports">Reports</button>
+        </nav>
+
+        <main class="main-content">
+            <!-- Memories View -->
+            <section id="memoriesView" class="view active">
+                <form id="memoryForm" class="memory-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="memoryInput">How was your day?</label>
+                            <input type="text" id="memoryInput" placeholder="Share your thoughts..." required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="moodSelect">Mood</label>
+                            <select id="moodSelect" class="mood-select">
+                                <option value="happy">🙂 Happy</option>
+                                <option value="sad">😢 Sad</option>
+                                <option value="neutral">😐 Neutral</option>
+                                <option value="excited">🤩 Excited</option>
+                                <option value="tired">😴 Tired</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="categorySelect">Category</label>
+                            <select id="categorySelect">
+                                <option value="work">💼 Work</option>
+                                <option value="personal">👤 Personal</option>
+                                <option value="health">❤️ Health</option>
+                                <option value="study">📚 Study</option>
+                                <option value="other">🔄 Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dateTime">Date & Time</label>
+                            <input type="datetime-local" id="dateTime" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Notes (optional)</label>
+                        <textarea id="description" rows="3" placeholder="Add any additional notes..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="imageAttachment">Add Image</label>
+                            <input type="file" id="imageAttachment" accept="image/*">
+                            <div id="imagePreview" class="image-preview"></div>
+                        </div>
+                        
+                        <div class="form-group tags-input">
+                            <label for="tags">Tags</label>
+                            <input type="text" id="tags" placeholder="Add tags (comma separated)">
+                            <div id="tagsList" class="tags-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="weather-info" id="weatherInfo">
+                        <span class="weather-icon">⏳</span>
+                        <span class="weather-text">Loading weather...</span>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Log Memory</button>
+                </form>
+
+                <div class="filters">
+                    <div class="search-box">
+                        <input type="text" id="searchMemories" placeholder="Search memories...">
+                    </div>
+                    <div class="filter-controls">
+                        <select id="filterCategory">
+                            <option value="">All Categories</option>
+                            <option value="work">Work</option>
+                            <option value="personal">Personal</option>
+                            <option value="health">Health</option>
+                            <option value="study">Study</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <select id="filterMood">
+                            <option value="">All Moods</option>
+                            <option value="happy">Happy</option>
+                            <option value="sad">Sad</option>
+                            <option value="neutral">Neutral</option>
+                            <option value="excited">Excited</option>
+                            <option value="tired">Tired</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="data-controls">
+                    <button id="exportData" class="btn-secondary">Export Data</button>
+                    <button id="importData" class="btn-secondary">Import Data</button>
+                    <input type="file" id="importFile" style="display:none;" accept="application/json">
+                </div>
+
+                <div class="memory-display">
+                    <h2>Your Memories</h2>
+                    <ul id="memoryList" class="memory-list"></ul>
+                </div>
+
+                <div class="insights-container">
+                    <div class="chart-container">
+                        <h2>Activity Insights</h2>
+                        <canvas id="memoryActivityChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h2>Mood Trends</h2>
+                        <canvas id="memoryMoodChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Goals View -->
+            <section id="goalsView" class="view">
+                <div class="goals-container">
+                    <div class="goals-header">
+                        <h2>Your Goals</h2>
+                        <button id="addGoalBtn" class="btn-secondary">Add Goal</button>
+                    </div>
+                    <div class="goals-list" id="goalsList"></div>
+                </div>
+                
+                <dialog id="goalDialog" class="modal">
+                    <form id="goalForm" class="modal-content">
+                        <h3>Add New Goal</h3>
+                        <div class="form-group">
+                            <label for="goalTitle">Goal Title</label>
+                            <input type="text" id="goalTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="goalDeadline">Deadline</label>
+                            <input type="date" id="goalDeadline" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="goalPriority">Priority</label>
+                            <select id="goalPriority">
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn-secondary" onclick="this.closest('dialog').close()">Cancel</button>
+                            <button type="submit" class="btn-primary">Save Goal</button>
+                        </div>
+                    </form>
+                </dialog>
+            </section>
+
+            <!-- Pomodoro View -->
+            <section id="pomodoroView" class="view">
+                <div class="pomodoro-container">
+                    <div class="timer-display">
+                        <span id="timerMinutes">25</span>:<span id="timerSeconds">00</span>
+                    </div>
+                    <div class="timer-controls">
+                        <button id="startTimer" class="btn-primary">Start</button>
+                        <button id="pauseTimer" class="btn-secondary" disabled>Pause</button>
+                        <button id="resetTimer" class="btn-secondary">Reset</button>
+                    </div>
+                    <div class="timer-settings">
+                        <div class="form-group">
+                            <label for="workDuration">Work Duration (minutes)</label>
+                            <input type="number" id="workDuration" value="25" min="1" max="60">
+                        </div>
+                        <div class="form-group">
+                            <label for="breakDuration">Break Duration (minutes)</label>
+                            <input type="number" id="breakDuration" value="5" min="1" max="30">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports View -->
+            <section id="reportsView" class="view">
+                <div class="reports-container">
+                    <div class="reports-header">
+                        <h2>Your Progress</h2>
+                        <div class="date-range">
+                            <button class="btn-secondary active" data-range="week">Week</button>
+                            <button class="btn-secondary" data-range="month">Month</button>
+                            <button class="btn-secondary" data-range="year">Year</button>
+                        </div>
+                    </div>
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <h3>Mood Overview</h3>
+                            <canvas id="reportMoodChart"></canvas>
+                        </div>
+                        <div class="report-card">
+                            <h3>Activity Distribution</h3>
+                            <canvas id="reportActivityChart"></canvas>
+                        </div>
+                        <div class="report-card">
+                            <h3>Goals Progress</h3>
+                            <canvas id="reportGoalsChart"></canvas>
+                        </div>
+                        <div class="report-card">
+                            <h3>Productivity Score</h3>
+                            <div class="productivity-score">
+                                <span id="productivityScore">0</span>
+                                <small>/ 100</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="config.js"></script>
+    <script src="memory-charts.js"></script>
+    <script src="pomodoro.js"></script>
+    <script src="goals.js"></script>
+    <script src="reports.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
